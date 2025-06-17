@@ -1,3 +1,4 @@
+process.env.CHROME_PATH = process.env.CHROME_PATH || '/usr/bin/google-chrome';
 const express = require("express");
 const venom = require("venom-bot");
 
