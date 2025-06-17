@@ -1,10 +1,12 @@
 const express = require("express");
 const venom = require("venom-bot");
+const QRCode = require("qrcode");
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 let clientInstance = null;
+let currentBase64QR = null;
 
 venom
   .create(
@@ -12,15 +14,13 @@ venom
       session: "acte6bot",
       puppeteerOptions: {
         headless: true,
-        args: ["--no-sandbox"]
+        args: ["--no-sandbox"],
       },
-      useChrome: false
+      useChrome: false,
     },
     (base64Qrimg, asciiQR, attempts, urlCode) => {
-      console.log("⚠️ Callback QR déclenché");
-      console.log("📸 QR Code en base64 : ", base64Qrimg);
-      console.log("🧾 QR (ASCII):\n", asciiQR);
-      console.log("🔗 URL code (scan depuis ton téléphone):", urlCode);
+      currentBase64QR = base64Qrimg; // ← stock le QR pour qu’on puisse le voir
+      console.log("🔗 Scan ce lien pour WhatsApp : " + urlCode);
     }
   )
   .then((client) => {
@@ -34,7 +34,14 @@ venom
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("🤖 Acte 6 bot is running");
+  if (currentBase64QR) {
+    res.send(`
+      <h2>Scan pour connecter le bot WhatsApp :</h2>
+      <img src="${currentBase64QR}" style="max-width:400px;">
+    `);
+  } else {
+    res.send("QR code pas encore prêt...");
+  }
 });
 
 app.post("/send", async (req, res) => {
