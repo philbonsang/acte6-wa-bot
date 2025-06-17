@@ -1,4 +1,3 @@
-process.env.CHROME_PATH = process.env.CHROME_PATH || '/usr/bin/google-chrome';
 const express = require("express");
 const venom = require("venom-bot");
 
@@ -8,7 +7,14 @@ const port = process.env.PORT || 3000;
 let clientInstance = null;
 
 venom
-  .create({ session: "acte6bot" })
+  .create({
+    session: "acte6bot",
+    puppeteerOptions: {
+      headless: true,
+      args: ['--no-sandbox']
+    },
+    useChrome: false
+  })
   .then((client) => {
     clientInstance = client;
     console.log("✅ Bot connecté à WhatsApp");
@@ -20,14 +26,16 @@ venom
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("🤖 Bot Venom prêt !");
+  res.send("🤖 Acte 6 bot is running");
 });
 
 app.post("/send", async (req, res) => {
   const { number, message } = req.body;
+
   if (!clientInstance) {
-    return res.status(503).send("Bot pas encore prêt");
+    return res.status(503).send("⛔ Bot pas encore prêt");
   }
+
   try {
     await clientInstance.sendText(number + "@c.us", message);
     res.send("✅ Message envoyé à " + number);
@@ -38,5 +46,5 @@ app.post("/send", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("Serveur démarré sur le port " + port);
+  console.log("🚀 Serveur en ligne sur le port " + port);
 });
