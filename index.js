@@ -7,19 +7,22 @@ const port = process.env.PORT;
 let clientInstance = null;
 
 venom
-  .create({
-    session: "acte6bot",
-    puppeteerOptions: {
-      headless: true,
-      args: ['--no-sandbox']
+  .create(
+    {
+      session: "acte6bot",
+      puppeteerOptions: {
+        headless: true,
+        args: ["--no-sandbox"]
+      },
+      useChrome: false
     },
-    useChrome: false
-  },
-  (base64Qrimg, asciiQR, attempts, urlCode) => {
-    console.log("📸 QR Code en base64 : ", base64Qrimg);
-    console.log("🧾 QR (ASCII):\n", asciiQR);
-    console.log("🔗 URL code (scan depuis ton téléphone):", urlCode);
-  })
+    (base64Qrimg, asciiQR, attempts, urlCode) => {
+      console.log("⚠️ Callback QR déclenché");
+      console.log("📸 QR Code en base64 : ", base64Qrimg);
+      console.log("🧾 QR (ASCII):\n", asciiQR);
+      console.log("🔗 URL code (scan depuis ton téléphone):", urlCode);
+    }
+  )
   .then((client) => {
     clientInstance = client;
     console.log("✅ Bot connecté à WhatsApp");
