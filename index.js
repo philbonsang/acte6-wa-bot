@@ -14,6 +14,11 @@ venom
       args: ['--no-sandbox']
     },
     useChrome: false
+  },
+  (base64Qrimg, asciiQR, attempts, urlCode) => {
+    console.log("📸 QR Code en base64 : ", base64Qrimg);
+    console.log("🧾 QR (ASCII):\n", asciiQR);
+    console.log("🔗 URL code (scan depuis ton téléphone):", urlCode);
   })
   .then((client) => {
     clientInstance = client;
